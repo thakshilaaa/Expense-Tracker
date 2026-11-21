@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpenseTrack | Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f3f4f6; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-6 min-h-screen">
+
+    <div class="max-w-5xl mx-auto animate-fade-in">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-10">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-br from-brand-500 to-purple-600 text-white p-3 rounded-xl shadow-lg shadow-indigo-200">
+                    <i class="fa-solid fa-wallet text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">ExpenseTrack</h1>
+                    <p class="text-sm text-slate-500 font-medium">QA Portfolio Project</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-sm font-medium text-slate-500 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200">
+                <i class="fa-solid fa-circle text-green-500 text-[10px]"></i> API Connected
+            </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <!-- Income Card -->
+            <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fa-solid fa-arrow-trend-up text-6xl text-green-500"></i>
+                </div>
+                <h3 class="text-slate-500 text-sm font-semibold mb-1 uppercase tracking-wider">Total Income</h3>
+                <p class="text-3xl font-bold text-slate-800" id="summary-income">$0.00</p>
+            </div>
+
+            <!-- Expense Card -->
+            <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fa-solid fa-arrow-trend-down text-6xl text-rose-500"></i>
+                </div>
+                <h3 class="text-slate-500 text-sm font-semibold mb-1 uppercase tracking-wider">Total Expense</h3>
+                <p class="text-3xl font-bold text-slate-800" id="summary-expense">$0.00</p>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="bg-gradient-to-br from-brand-600 to-purple-700 p-6 rounded-2xl shadow-lg shadow-indigo-200 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-30 transition-opacity">
+                    <i class="fa-solid fa-scale-balanced text-6xl text-white"></i>
+                </div>
+                <h3 class="text-indigo-100 text-sm font-semibold mb-1 uppercase tracking-wider">Current Balance</h3>
+                <p class="text-3xl font-bold text-white" id="summary-balance">$0.00</p>
+            </div>
+        </div>
+
+        <!-- Add Transaction Form -->
+        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-100 mb-10">
+            <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-brand-500"></i> Add New Transaction
+            </h2>
+            <form id="transaction-form" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Amount</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2 text-slate-400">$</span>
+                        <input type="number" id="amount" step="0.01" required class="pl-7 w-full rounded-lg border-slate-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 p-2.5 border bg-slate-50 transition-colors" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Description</label>
+                    <input type="text" id="description" required class="w-full rounded-lg border-slate-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 p-2.5 border bg-slate-50 transition-colors" placeholder="e.g. Groceries">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Date</label>
+                    <input type="date" id="date" required class="w-full rounded-lg border-slate-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 p-2.5 border bg-slate-50 transition-colors">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Category</label>
+                    <select id="category" required class="w-full rounded-lg border-slate-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 p-2.5 border bg-slate-50 transition-colors">
+                        <!-- Options will load via JS -->
+                    </select>
+                </div>
+                <div class="md:col-span-5 mt-2">
+                    <button type="submit" class="w-full bg-brand-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-brand-700 hover:shadow-lg transition-all flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-check"></i> Save Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="glass-card rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-6 border-b border-slate-100">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-list-ul text-brand-500"></i> Recent Transactions
+                </h2>
+            </div>
+            <table class="w-full">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</th>
+                        <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transaction-list" class="divide-y divide-slate-100">
+                    <!-- Rows will load via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        const USER_ID = 1;
+
+        async function loadCategories() {
+            const res = await fetch(`${API_URL}/categories?user_id=${USER_ID}`);
+            const categories = await res.json();
+            const select = document.getElementById('category');
+            select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        async function loadSummary() {
+            const res = await fetch(`${API_URL}/transactions/summary?user_id=${USER_ID}`);
+            const data = await res.json();
+            
+            document.getElementById('summary-income').innerText = `$${data.income.toFixed(2)}`;
+            document.getElementById('summary-expense').innerText = `$${data.expense.toFixed(2)}`;
+            document.getElementById('summary-balance').innerText = `$${data.balance.toFixed(2)}`;
+        }
+
+        async function loadTransactions() {
+            const res = await fetch(`${API_URL}/transactions?user_id=${USER_ID}`);
+            const txs = await res.json();
+            
+            const tbody = document.getElementById('transaction-list');
+            if (txs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400"><i class="fa-solid fa-inbox text-4xl mb-3 block"></i>No transactions yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = txs.map(t => {
+                const isIncome = t.category_type === 'income';
+                const color = isIncome ? 'text-green-600' : 'text-rose-600';
+                const sign = isIncome ? '+' : '-';
+                const icon = isIncome ? 'fa-arrow-down text-green-500 bg-green-50' : 'fa-arrow-up text-rose-500 bg-rose-50';
+                
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">${t.date}</td>
+                        <td class="px-6 py-4 text-sm font-semibold text-slate-700">${t.description || '-'}</td>
+                        <td class="px-6 py-4 text-sm">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 shadow-sm">
+                                <i class="fa-solid ${icon.split(' ')[0]} ${isIncome ? 'text-green-500' : 'text-rose-500'}"></i>
+                                ${t.category_name}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-bold ${color}">${sign}$${t.amount.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                            <button onclick="deleteTransaction(${t.id})" class="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-colors" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function deleteTransaction(id) {
+            if (!confirm('Are you sure you want to delete this transaction?')) return;
+            await fetch(`${API_URL}/transactions/${id}`, { method: 'DELETE' });
+            refreshData();
+        }
+
+        document.getElementById('transaction-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const description = document.getElementById('description').value;
+            const date = document.getElementById('date').value;
+            const category_id = parseInt(document.getElementById('category').value);
+
+            await fetch(`${API_URL}/transactions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount, description, date, category_id, user_id: USER_ID })
+            });
+
+            e.target.reset();
+            document.getElementById('date').valueAsDate = new Date();
+            refreshData();
+        });
+
+        function refreshData() {
+            loadSummary();
+            loadTransactions();
+        }
+
+        async function init() {
+            document.getElementById('date').valueAsDate = new Date();
+            await loadCategories();
+            refreshData();
+        }
+
+        init();
+    </script>
+</body>
+</html>
